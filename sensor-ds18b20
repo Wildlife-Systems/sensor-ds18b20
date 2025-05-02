@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# WildlifeSystems - onboard sensors
+#
+# Script to read onboard sensors from a Raspberry Pi (onboard CPU and GPU) as 
+# well as a number of pseudo-sensors (storage used, memory used) that are useful
+# for monitoring the health of the device.
+#
+# This script is part of the WildlifeSystems project. For further information
+# please refer to https://docs.wildlife.systems, or for more information on
+# the project itself, please refer to https://wildlife.systems.
+
+if [[ "$#" -eq 1 ]]; then
+  if [[ "$1"  = "identify" ]]; then
+    exit 60;
+  fi
+  if [[ "$1" == "list" ]]; then
+    echo "temperature"
+    exit 0
+  fi
+fi
+
+JSON=$(sc-prototype)
+OUTPUT_COUNT=0
+PI_SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
+
+echo -n "["
+
+folders=$(ls /sys/bus/w1/devices/28* 2>/dev/null)
+if [ -z "$folders" ]; then
+    echo "Sensor not found"
+    exit 21
+else
+    for folder in $folders; do
+        # Read  temperature value from w1_slave file
+        TEMP=$(cat "$folder/w1_slave" | grep "t=" | cut -d "=" -f 2)
+        if [[ $OUTPUT_COUNT -gt 0 ]]; then
+            echo ","
+        fi
+        SENSOR=$(echo $JSON | jq ".sensor |= \"ds1820b\" | .measures |= \"temperature\" | .unit |= \"Celsius\"| .value |= ${TEMP} | .sensor_id |= \"${PI_SERIAL}_onboard_cpu\"")
+        echo -n $SENSOR
+        OUTPUT_COUNT=$((OUTPUT_COUNT+1))
+    done
+fi
+
+echo "]"
