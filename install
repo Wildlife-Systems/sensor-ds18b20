@@ -2,5 +2,5 @@
 
 wget https://raw.githubusercontent.com/Wildlife-Systems/sensor-ds18b20/refs/heads/main/sensor-ds18b20
 chown root:root sensor-dht11
-chmod +x sensor-dht11
-mv sensor-dht11 /usr/bin
+chmod +x sensor-ds18b20
+mv sensor-ds18b20 /usr/bin
