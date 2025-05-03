@@ -33,7 +33,7 @@ if [ -z "$folders" ]; then
 else
     for folder in $folders; do
         # Read  temperature value from w1_slave file
-        TEMP=$(cat "$folder/w1_slave" | grep "t=" | cut -d "=" -f 2)
+        TEMP=$( awk -F"=" '{if (NR>1) {print "$2/1000 \n"}}' $folder/w1_slave)
         if [[ $OUTPUT_COUNT -gt 0 ]]; then
             echo ","
         fi
