@@ -26,7 +26,7 @@ PI_SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
 
 echo -n "["
 
-folders=$(ls /sys/bus/w1/devices/28* 2>/dev/null)
+folders=$(ls -d /sys/bus/w1/devices/28* 2>/dev/null)
 if [ -z "$folders" ]; then
     echo "Sensor not found"
     exit 21
@@ -37,7 +37,10 @@ else
         if [[ $OUTPUT_COUNT -gt 0 ]]; then
             echo ","
         fi
-        SENSOR=$(echo $JSON | jq ".sensor |= \"ds1820b\" | .measures |= \"temperature\" | .unit |= \"Celsius\"| .value |= ${TEMP} | .sensor_id |= \"${PI_SERIAL}_onboard_cpu\"")
+        # get bit after last / of folder
+        sensor_id=$(echo $folder | awk -F'/' '{print $NF}')
+
+        SENSOR=$(echo $JSON | jq ".sensor |= \"ds1820b\" | .measures |= \"temperature\" | .unit |= \"Celsius\"| .value |= ${TEMP} | .sensor_id |= \"${sensor_id}\"")
         echo -n $SENSOR
         OUTPUT_COUNT=$((OUTPUT_COUNT+1))
     done
