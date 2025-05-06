@@ -2,9 +2,7 @@
 
 # WildlifeSystems - onboard sensors
 #
-# Script to read onboard sensors from a Raspberry Pi (onboard CPU and GPU) as 
-# well as a number of pseudo-sensors (storage used, memory used) that are useful
-# for monitoring the health of the device.
+# Script to read DS18B20 1-Wire temperature sensors.
 #
 # This script is part of the WildlifeSystems project. For further information
 # please refer to https://docs.wildlife.systems, or for more information on
