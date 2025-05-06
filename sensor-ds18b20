@@ -18,31 +18,41 @@ if [[ "$#" -eq 1 ]]; then
   fi
 fi
 
-JSON=$(sc-prototype)
+
 OUTPUT_COUNT=0
 PI_SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
 
 echo -n "["
 
-folders=$(ls -d /sys/bus/w1/devices/28* 2>/dev/null)
-if [ -z "$folders" ]; then
-    echo "Sensor not found"
-    exit 21
-else
-    for folder in $folders; do
-        # Read  temperature value from w1_slave file
-        TEMP=$(awk -F"=" '/t=/ {print $2/1000}' "$folder/w1_slave")
-        if [[ $OUTPUT_COUNT -gt 0 ]]; then
-            echo ","
-        fi
-        
-        # get sensor id from folder name
-        sensor_id=$(echo $folder | awk -F'/' '{print $NF}')
+for folder in /sys/bus/w1/devices/28-*/; do
+  if [[ ! -d "$folder" ]]; then
+    # Not a directory
+    continue
+  fi
 
-        SENSOR=$(echo $JSON | jq ".sensor |= \"ds1820b\" | .measures |= \"temperature\" | .unit |= \"Celsius\"| .value |= ${TEMP} | .sensor_id |= \"${sensor_id}\"")
-        echo -n $SENSOR
-        OUTPUT_COUNT=$((OUTPUT_COUNT+1))
-    done
-fi
+  
+
+  # Read  temperature value from w1_slave file
+  if [[ -f "$folder/w1_slave" ]]; then
+    TEMP=$(awk -F"=" '/t=/ {print $2/1000}' "$folder/w1_slave")
+    if [[ -z "$TEMP" ]]; then
+      echo "Error: Unable to read temperature from $folder/w1_slave" >&2
+      continue
+  fi
+  else
+    echo "Error: Missing w1_slave file in $folder" > &2
+    continue
+  fi
+
+ # Add a comma if this is not the first sensor
+  if [[ $OUTPUT_COUNT -gt 0 ]]; then
+    echo -n ","
+  fi
+
+  JSON=$(sc-prototype)
+  SENSOR=$(echo $JSON | jq ".sensor |= \"ds1820b\" | .measures |= \"temperature\" | .unit |= \"Celsius\"| .value |= ${TEMP} | .sensor_id |= \"${sensor_id}\"")
+  echo -n $SENSOR
+  OUTPUT_COUNT=$((OUTPUT_COUNT+1))
+done
 
 echo "]"
