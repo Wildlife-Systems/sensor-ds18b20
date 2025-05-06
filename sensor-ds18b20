@@ -32,10 +32,11 @@ else
     for folder in $folders; do
         # Read  temperature value from w1_slave file
         TEMP=$(awk -F"=" '/t=/ {print $2/1000}' "$folder/w1_slave")
-if [[ $OUTPUT_COUNT -gt 0 ]]; then
+        if [[ $OUTPUT_COUNT -gt 0 ]]; then
             echo ","
         fi
-        # get bit after last / of folder
+        
+        # get sensor id from folder name
         sensor_id=$(echo $folder | awk -F'/' '{print $NF}')
 
         SENSOR=$(echo $JSON | jq ".sensor |= \"ds1820b\" | .measures |= \"temperature\" | .unit |= \"Celsius\"| .value |= ${TEMP} | .sensor_id |= \"${sensor_id}\"")
