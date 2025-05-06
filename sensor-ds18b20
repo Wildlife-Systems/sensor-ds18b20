@@ -27,20 +27,18 @@ echo -n "["
 for folder in /sys/bus/w1/devices/28-*/; do
   if [[ ! -d "$folder" ]]; then
     # Not a directory
-    continue
+    break
   fi
 
-  
-
-  # Read  temperature value from w1_slave file
+  # Read temperature value from w1_slave file
   if [[ -f "$folder/w1_slave" ]]; then
     TEMP=$(awk -F"=" '/t=/ {print $2/1000}' "$folder/w1_slave")
     if [[ -z "$TEMP" ]]; then
       echo "Error: Unable to read temperature from $folder/w1_slave" >&2
       continue
-  fi
+    fi
   else
-    echo "Error: Missing w1_slave file in $folder" > &2
+    echo "Error: Missing w1_slave file in $folder" >&2
     continue
   fi
 
