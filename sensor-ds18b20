@@ -31,7 +31,7 @@ for folder in /sys/bus/w1/devices/28-*/; do
   fi
 
   # Extract sensor ID from folder name
-  SENSOR_ID=${folder##*/}
+  SENSOR_ID=$(basename "$folder")
 
   # Read temperature value from w1_slave file
   if [[ -f "$folder/w1_slave" ]]; then
