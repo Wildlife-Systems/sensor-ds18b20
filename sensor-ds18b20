@@ -20,7 +20,7 @@ fi
 
 
 OUTPUT_COUNT=0
-PI_SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
+PI_SERIAL=$(awk '/Serial/ {print $NF}' /proc/cpuinfo)
 
 echo -n "["
 
@@ -30,11 +30,14 @@ for folder in /sys/bus/w1/devices/28-*/; do
     break
   fi
 
+  # Extract sensor ID from folder name
+  SENSOR_ID=${folder##*/}
+
   # Read temperature value from w1_slave file
   if [[ -f "$folder/w1_slave" ]]; then
     TEMP=$(awk -F"=" '/t=/ {print $2/1000}' "$folder/w1_slave")
-    if [[ -z "$TEMP" ]]; then
-      echo "Error: Unable to read temperature from $folder/w1_slave" >&2
+    if [[ -z "$TEMP" || ! "$TEMP" =~ ^-?[0-9]+(\.[0-9]+)?$ ]]; then
+      echo "Error: Invalid temperature value in $folder/w1_slave" >&2
       continue
     fi
   else
@@ -48,7 +51,7 @@ for folder in /sys/bus/w1/devices/28-*/; do
   fi
 
   JSON=$(sc-prototype)
-  SENSOR=$(echo $JSON | jq ".sensor |= \"ds1820b\" | .measures |= \"temperature\" | .unit |= \"Celsius\"| .value |= ${TEMP} | .sensor_id |= \"${sensor_id}\"")
+  SENSOR=$(echo $JSON | jq ".sensor |= \"ds1820b\" | .measures |= \"temperature\" | .unit |= \"Celsius\"| .value |= ${TEMP} | .sensor_id |= \"${SENSOR_ID}\"")
   echo -n $SENSOR
   OUTPUT_COUNT=$((OUTPUT_COUNT+1))
 done
