@@ -14,6 +14,7 @@ function get_config_txt {
         fi
 }
 
+config_txt=$(get_config_txt)
 cnt=$(grep -c "dtoverlay=w1-gpio,gpiopin=17,pullup=1" "$config_txt")
 if [[ "$cnt" -eq 0 ]]; then
   sudo sh -c "echo '# Enable 1-Wire interface on pin 17
