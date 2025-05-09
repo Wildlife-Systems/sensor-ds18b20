@@ -19,3 +19,11 @@ sudo sr ds18b20
 ## Hardware configuration
 
 TODO
+
+## Building the Debian package
+
+From within the sensor-ds18b20 directory:
+
+```
+debuild -us -uc -b
+```
