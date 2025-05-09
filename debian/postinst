@@ -20,6 +20,8 @@ if [[ "$cnt" -eq 0 ]]; then
 dtoverlay=w1-gpio,gpiopin=17,pullup=1' >> $config_txt"
 fi
 
-dtoverlay w1-gpio gpiopin=17 pullup=1
+echo "Overlaytest"
+
+dtoverlay w1-gpio gpiopin=17 pullup=1 || exit 0
 
 exit 0

@@ -2,15 +2,12 @@
 .SH NAME
 sensor-ds1b20 \- read DS18B20 sensors attached to the 1-Wire bus
 .SH SYNOPSIS
-.B corrupt
-[\fB\-n\fR \fIBITS\fR]
-[\fB\-\-bits\fR \fIBITS\fR]
-.IR file ...
+.B sensor-ds18b20
 .SH DESCRIPTION
-.B corrupt
-modifies files by toggling a randomly chosen bit.
+.B sensor-ds18b20
+Reads temperature data from DS18B20 sensors attached to the 1-Wire bus (default GPIO pin is 17).
 .SH OPTIONS
 .TP
-.BR \-n ", " \-\-bits =\fIBITS\fR
-Set the number of bits to modify.
-Default is one bit.
+None
+.SH NOTES
+This program is designed to be used with the \fBsr\fR program (sensor-read) from WildlifeSystems.
