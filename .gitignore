@@ -1,0 +1,5 @@
+debian/.debhelper/*
+debian/debhelper-*
+debian/files
+debian/sensor-ds18b20/*
+debian/sensor-ds18b20.substvars

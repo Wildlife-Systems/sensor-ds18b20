@@ -1,4 +1,4 @@
-sensor-ds18b20 (1.0.0) stable; urgency=medium
+sensor-ds18b20 (1.0.0) unstable; urgency=medium
 
   * Initial release.
 

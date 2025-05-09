@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 chmod +x /usr/bin/sensor-ds18b20
 
 # Function to get location of config.txt
