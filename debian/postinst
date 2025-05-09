@@ -1,0 +1,23 @@
+#!/bin/bash
+
+chmod +x /usr/bin/sensor-ds18b20
+
+# Function to get location of config.txt
+function get_config_txt {
+        if [ -f /boot/firmware/config.txt ]; then
+                echo "/boot/firmware/config.txt"
+        else
+                echo "/boot/config.txt"
+        fi
+}
+
+config_txt=$(get_config_txt)
+cnt=$(grep -c "dtoverlay=w1-gpio,gpiopin=17,pullup=1" "$config_txt")
+if [[ "$cnt" -eq 0 ]]; then
+  sh -c "echo '# Enable 1-Wire interface on pin 17
+dtoverlay=w1-gpio,gpiopin=17,pullup=1' >> $config_txt"
+fi
+
+dtoverlay w1-gpio gpiopin=17 pullup=1
+
+exit 0
