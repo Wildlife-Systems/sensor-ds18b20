@@ -1,3 +1,15 @@
+sensor-ds18b20 (1.0.4) stable; urgency=medium
+
+  * Add comprehensive error handling and dependency checks
+  * Improve postinst script with proper error handling
+  * Add postrm script for clean package removal
+  * Update man page with complete documentation
+  * Fix description and metadata in control file
+  * Add warning message when no sensors detected
+  * Remove unused variables from sensor script
+
+ -- Ed Baker <ed@ebaker.me.uk>  Thu, 03 Oct 2025 17:00:00 +0100
+
 sensor-ds18b20 (1.0.3) stable; urgency=high
 
   * Correct sensor name 
