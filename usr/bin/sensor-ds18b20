@@ -1,12 +1,21 @@
 #!/bin/bash
 
-# WildlifeSystems - onboard sensors
-#
-# Script to read DS18B20 1-Wire temperature sensors.
+# WildlifeSystems - read DS18B20 1-Wire temperature sensors.
 #
 # This script is part of the WildlifeSystems project. For further information
 # please refer to https://docs.wildlife.systems, or for more information on
 # the project itself, please refer to https://wildlife.systems.
+
+# Check for required commands
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq is not installed. Please install it with: sudo apt-get install jq" >&2
+    exit 1
+fi
+
+if ! command -v sc-prototype &> /dev/null; then
+    echo "Error: sc-prototype is not installed. Please install sensor-control package." >&2
+    exit 1
+fi
 
 if [[ "$#" -eq 1 ]]; then
   if [[ "$1"  = "identify" ]]; then
@@ -20,7 +29,6 @@ fi
 
 
 OUTPUT_COUNT=0
-PI_SERIAL=$(awk '/Serial/ {print $NF}' /proc/cpuinfo)
 
 echo -n "["
 
@@ -45,7 +53,7 @@ for folder in /sys/bus/w1/devices/28-*/; do
     continue
   fi
 
- # Add a comma if this is not the first sensor
+  # Add a comma if this is not the first sensor
   if [[ $OUTPUT_COUNT -gt 0 ]]; then
     echo -n ","
   fi
@@ -57,3 +65,8 @@ for folder in /sys/bus/w1/devices/28-*/; do
 done
 
 echo "]"
+
+# Warn if no sensors were found
+if [[ $OUTPUT_COUNT -eq 0 ]]; then
+  echo "Warning: No DS18B20 sensors detected. Please check your wiring and ensure 1-Wire is enabled." >&2
+fi
