@@ -51,7 +51,7 @@ for folder in /sys/bus/w1/devices/28-*/; do
   fi
 
   JSON=$(sc-prototype)
-  SENSOR=$(echo $JSON | jq ".sensor |= \"ds1820b\" | .measures |= \"temperature\" | .unit |= \"Celsius\"| .value |= ${TEMP} | .sensor_id |= \"${SENSOR_ID}\"")
+  SENSOR=$(echo $JSON | jq ".sensor |= \"ds18b20\" | .measures |= \"temperature\" | .unit |= \"Celsius\"| .value |= ${TEMP} | .sensor_id |= \"${SENSOR_ID}\"")
   echo -n $SENSOR
   OUTPUT_COUNT=$((OUTPUT_COUNT+1))
 done
