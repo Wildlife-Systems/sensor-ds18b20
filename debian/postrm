@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -e
+
+# Only run cleanup on complete removal, not on upgrades
+if [ "$1" = "purge" ] || [ "$1" = "remove" ]; then
+    # Function to get location of config.txt
+    function get_config_txt {
+        if [ -f /boot/firmware/config.txt ]; then
+            echo "/boot/firmware/config.txt"
+        else
+            echo "/boot/config.txt"
+        fi
+    }
+
+    config_txt=$(get_config_txt)
+    
+    # Remove the dtoverlay line and comment if they exist
+    if [ -f "$config_txt" ]; then
+        sed -i '/^# Enable 1-Wire interface on pin 17$/d' "$config_txt"
+        sed -i '/^dtoverlay=w1-gpio,gpiopin=17,pullup=1$/d' "$config_txt"
+        
+        echo "1-Wire configuration removed from $config_txt"
+        echo "Please reboot the system to apply changes."
+    fi
+fi
+
+#DEBHELPER#
+
+exit 0
